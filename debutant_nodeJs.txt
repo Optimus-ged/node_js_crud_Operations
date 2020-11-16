@@ -1,0 +1,56 @@
+const mysql = require('mysql');
+const express = require('express');
+const { response } = require('express');
+const app = express();
+
+// J'AFFECTE LA CONNEXION DANS UNE CONSTANTE
+const db = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'my_store'
+});
+
+
+// JE TESTE LA CONNEXION HISTOIRE DE VOIR S'IL Y A UNE ERREUR
+db.connect((error) => {
+    if (error) () => console.log(error);
+    console.log('Connection Ok !!!');
+});
+
+
+// J'ECOUTE L'ETAT DE LA CONNEXION SUR LE PORT 3000
+app.listen(3600, () => {
+    console.log('THE APP IS RUNNING AT PORT 3600');
+});
+
+
+// JE RECUPERE LES DONNEES DE LA TABLE tb_item
+app.get('/Get-all-items', (request, response) => {
+    let sql = 'SELECT * FROM tb_item';
+    db.query(sql, (error, rows) => {
+        if (error) () => console.log(error);
+        response.json(rows);
+    });
+});
+
+
+// JE RECUPERE UN ELEMENT A PARTIR DE SON ID PASSE EN PARAMETRE
+app.get('/Get-one-element/:id', (request, response) => {
+    let sql = 'SELECT * FROM tb_item WHERE id = ?';
+    db.query(sql, [request.params.id], (error, row) => {
+        if (error) () => console.log(error);
+        response.json(row);
+    });
+});
+
+
+// JE SUPPRIME UNE DONNEE AVEC UN DELETE
+app.delete('/delete-item/:id', (request, response) => {
+    let sql = 'DELETE FROM tb_item WHERE id = ?';
+    db.query(sql, [request.params.id], (error, result) => {
+        if (error) () => console.log(error);
+        response.json('LA VALEUR A ETE SUPPRIMEE AVEC SUCCES');
+    });
+});
+
